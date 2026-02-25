@@ -13,169 +13,123 @@
       --surface: #151820;
       --border: #252a35;
       --green: #00e0a0;
-      --orange: #ff6b35;
-      --yellow: #ffd166;
+      --orange: #ff9800;
       --purple: #b388ff;
+      --blue: #4285f4;
+      --avail-good: #4fc3f7;
+      --avail-low: #ffd166;
+      --avail-empty: #ef5350;
       --text: #e8eaf0;
       --muted: #5a6070;
       --radius: 8px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'DM Mono', monospace;
-      background: var(--bg); color: var(--text);
-      height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-    }
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px; background: var(--surface);
-      border-bottom: 1px solid var(--border); z-index: 1000; flex-shrink: 0;
-    }
-    .logo { display: flex; align-items: center; gap: 12px; }
-    .logo-icon { font-size: 22px; }
-    h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; }
+    body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Header */
+    header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 1000; flex-shrink: 0; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    h1 { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
     h1 span { color: var(--green); }
-    .status-bar { display: flex; align-items: center; gap: 20px; font-size: 0.72rem; color: var(--muted); }
-    .pulse-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-      animation: pulse 2s infinite; display: inline-block; margin-right: 6px;
-    }
-    @keyframes pulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:0.4; transform:scale(0.8); }
-    }
+    .status-bar { display: flex; align-items: center; gap: 12px; font-size: 0.72rem; color: var(--muted); }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; display: inline-block; margin-right: 5px; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)} }
     #last-updated { color: var(--text); }
-    .refresh-btn {
-      background: none; border: 1px solid var(--border); color: var(--muted);
-      padding: 5px 12px; border-radius: var(--radius); cursor: pointer;
-      font-family: 'DM Mono', monospace; font-size: 0.72rem; transition: all 0.2s;
-    }
-    .refresh-btn:hover { border-color: var(--green); color: var(--green); }
+    .btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 5px 10px; border-radius: var(--radius); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.7rem; transition: all 0.2s; }
+    .btn:hover { border-color: var(--green); color: var(--green); }
+
+    /* Layout */
     .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 340px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    #map { flex: 1; }
 
-    /* Sidebar */
-    .sidebar {
-      width: 310px; flex-shrink: 0; background: var(--surface);
-      border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
-    }
-    .sidebar-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
-    .sidebar-title {
-      font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
-    }
+    /* Sidebar tabs */
+    .tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .tab { flex: 1; padding: 9px 4px; text-align: center; font-size: 0.65rem; font-family: 'Syne', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--green); border-bottom-color: var(--green); }
 
-    /* Toggle filter buttons */
-    .filter-toggles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    /* Tab panels */
+    .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
 
-    .toggle-btn {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 8px 6px; text-align: center;
-      cursor: pointer; transition: all 0.2s; position: relative; user-select: none;
-    }
+    /* Summary panel */
+    .sidebar-header { padding: 12px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar-section-title { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; }
+    .filter-toggles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .toggle-btn { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 5px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; user-select: none; }
     .toggle-btn:hover { border-color: var(--muted); }
-
     .toggle-btn.active-bikes    { border-color: var(--green);  background: rgba(0,224,160,0.1); }
-    .toggle-btn.active-ebikes   { border-color: var(--yellow); background: rgba(255,209,102,0.1); }
+    .toggle-btn.active-ebikes   { border-color: var(--orange); background: rgba(255,152,0,0.1); }
     .toggle-btn.active-scooters { border-color: var(--purple); background: rgba(179,136,255,0.1); }
-    .toggle-btn.active-docks    { border-color: var(--orange); background: rgba(255,107,53,0.1); }
-
-    .toggle-btn.dimmed { opacity: 0.35; }
-
-    .toggle-value {
-      font-family: 'Syne', sans-serif; font-size: 1.3rem;
-      font-weight: 800; line-height: 1; margin-bottom: 4px;
-    }
+    .toggle-btn.active-docks    { border-color: var(--avail-good); background: rgba(79,195,247,0.1); }
+    .toggle-btn.dimmed { opacity: 0.3; }
+    .toggle-value { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1; margin-bottom: 3px; }
     .toggle-value.bikes    { color: var(--green); }
-    .toggle-value.ebikes   { color: var(--yellow); }
+    .toggle-value.ebikes   { color: var(--orange); }
     .toggle-value.scooters { color: var(--purple); }
-    .toggle-value.docks    { color: var(--orange); }
-    .toggle-label { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .toggle-value.docks    { color: var(--avail-good); }
+    .toggle-label { font-size: 0.56rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .toggle-tick { position: absolute; top: 3px; right: 4px; font-size: 0.5rem; opacity: 0; transition: opacity 0.15s; color: var(--green); }
+    .toggle-btn[class*="active-"] .toggle-tick { opacity: 1; }
+    .filter-hint { padding: 5px 14px 0; font-size: 0.6rem; color: var(--muted); min-height: 16px; }
 
-    .toggle-tick {
-      position: absolute; top: 4px; right: 5px;
-      font-size: 0.55rem; opacity: 0; transition: opacity 0.15s;
-    }
-    .toggle-btn.active-bikes .toggle-tick,
-    .toggle-btn.active-ebikes .toggle-tick,
-    .toggle-btn.active-scooters .toggle-tick,
-    .toggle-btn.active-docks .toggle-tick { opacity: 1; }
+    /* Top 5 panel */
+    .top5-list { flex: 1; overflow-y: auto; padding: 8px; }
+    .top5-item { padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 5px; cursor: pointer; transition: all 0.15s; background: var(--bg); }
+    .top5-item:hover { border-color: var(--muted); }
+    .top5-rank { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800; color: var(--muted); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+    .top5-rank span { color: var(--green); }
+    .top5-name { font-size: 0.75rem; color: var(--text); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top5-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+    .top5-bar-fill { height: 100%; background: var(--avail-good); border-radius: 2px; transition: width 0.6s ease; }
+    .top5-meta { font-size: 0.62rem; color: var(--muted); }
 
-    /* Filter hint */
-    .filter-hint {
-      padding: 6px 16px 0;
-      font-size: 0.62rem; color: var(--muted); min-height: 18px;
-      transition: opacity 0.2s;
-    }
-
-    /* Legend */
-    .legend {
-      padding: 8px 16px 10px; border-bottom: 1px solid var(--border);
-      display: flex; gap: 14px; flex-wrap: wrap;
-    }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--muted); }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-    .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border); }
-    .search-box input {
-      width: 100%; background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text); padding: 7px 12px;
-      font-family: 'DM Mono', monospace; font-size: 0.75rem; outline: none; transition: border-color 0.2s;
-    }
+    /* Stations list */
+    .legend { padding: 7px 14px 8px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.62rem; color: var(--muted); }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .search-box { padding: 8px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .search-box input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); padding: 6px 10px; font-family: 'DM Mono', monospace; font-size: 0.73rem; outline: none; transition: border-color 0.2s; }
     .search-box input:focus { border-color: var(--green); }
     .search-box input::placeholder { color: var(--muted); }
-
-    .station-list { flex: 1; overflow-y: auto; padding: 8px; }
-    .station-list::-webkit-scrollbar { width: 4px; }
+    .station-list { flex: 1; overflow-y: auto; padding: 6px; }
+    .station-list::-webkit-scrollbar { width: 3px; }
     .station-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .station-item {
-      padding: 10px 12px; border-radius: var(--radius); border: 1px solid transparent;
-      cursor: pointer; transition: all 0.15s; margin-bottom: 4px; animation: slideIn 0.3s ease both;
-    }
-    @keyframes slideIn {
-      from { opacity:0; transform:translateX(-8px); }
-      to   { opacity:1; transform:translateX(0); }
-    }
+    .station-item { padding: 8px 10px; border-radius: var(--radius); border: 1px solid transparent; cursor: pointer; transition: all 0.15s; margin-bottom: 3px; animation: slideIn 0.3s ease both; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
     .station-item:hover { background: var(--bg); border-color: var(--border); }
     .station-item.active { background: rgba(0,224,160,0.07); border-color: var(--green); }
-    .station-item.closed { opacity: 0.4; }
-    .station-item.filtered-out { opacity: 0.15; pointer-events: none; }
-
-    .station-name {
-      font-size: 0.75rem; font-weight: 500; color: var(--text);
-      margin-bottom: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .station-closed-badge {
-      font-size: 0.6rem; color: var(--orange); border: 1px solid var(--orange);
-      border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: middle;
-    }
-    .vehicle-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-    .chip {
-      display: flex; align-items: center; gap: 4px;
-      padding: 2px 7px; border-radius: 20px; font-size: 0.65rem; border: 1px solid;
-    }
+    .station-item.closed { opacity: 0.35; }
+    .station-item.filtered-out { opacity: 0.12; pointer-events: none; }
+    .station-name-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; gap: 4px; }
+    .station-name { font-size: 0.73rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; max-width: 170px; }
+    .station-meta { font-size: 0.6rem; color: var(--muted); white-space: nowrap; margin-left: 4px; display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+    .fav-btn { background: var(--bg); border: 1px solid #3a4050; border-radius: 4px; cursor: pointer; font-size: 0.8rem; padding: 2px 6px; opacity: 1; transition: all 0.15s; line-height: 1; flex-shrink: 0; color: #6a7080; }
+    .fav-btn:hover { color: gold; border-color: gold; transform: scale(1.1); }
+    .fav-btn.active { color: gold; border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.08); }
+    .badge { font-size: 0.58rem; border: 1px solid; border-radius: 3px; padding: 1px 4px; white-space: nowrap; }
+    .badge.closed  { color: var(--avail-empty); border-color: var(--avail-empty); }
+    .badge.nearest { color: var(--blue); border-color: var(--blue); }
+    .vehicle-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+    .chip { display: flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 20px; font-size: 0.62rem; border: 1px solid; }
     .chip.bike    { color: var(--green);  border-color: rgba(0,224,160,0.3);   background: rgba(0,224,160,0.07); }
-    .chip.ebike   { color: var(--yellow); border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.07); }
+    .chip.ebike   { color: var(--orange); border-color: rgba(255,152,0,0.3);   background: rgba(255,152,0,0.07); }
     .chip.scooter { color: var(--purple); border-color: rgba(179,136,255,0.3); background: rgba(179,136,255,0.07); }
     .chip.empty   { color: var(--muted);  border-color: var(--border);         background: transparent; }
 
-    #map { flex: 1; }
+    /* Favourites panel */
+    .favs-list { flex: 1; overflow-y: auto; padding: 6px; }
+    .favs-empty { padding: 30px 20px; text-align: center; color: var(--muted); font-size: 0.78rem; line-height: 1.6; }
 
     /* Loading */
-    .loading-overlay {
-      position: absolute; inset: 0; background: var(--bg); display: flex;
-      flex-direction: column; align-items: center; justify-content: center;
-      z-index: 9999; gap: 16px; transition: opacity 0.4s;
-    }
+    .loading-overlay { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; gap: 16px; transition: opacity 0.4s; }
     .loading-overlay.hidden { opacity: 0; pointer-events: none; }
-    .spinner {
-      width: 40px; height: 40px; border: 3px solid var(--border);
-      border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
     .loading-text { font-family: 'Syne', sans-serif; font-size: 0.85rem; color: var(--muted); }
 
-    /* Leaflet overrides */
+    /* Leaflet */
     .leaflet-container { background: #0d0f14; }
     .leaflet-tile { filter: brightness(0.6) saturate(0.5) hue-rotate(190deg); }
     .leaflet-control-zoom a { background: var(--surface) !important; color: var(--text) !important; border-color: var(--border) !important; }
@@ -183,36 +137,41 @@
     .leaflet-control-attribution a { color: var(--muted) !important; }
 
     /* Markers */
-    .marker-bubble {
-      background: var(--surface); border: 2px solid var(--green);
-      border-radius: 10px; padding: 3px 8px;
-      font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
-      color: var(--text); white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      display: flex; align-items: center; gap: 5px; transition: transform 0.15s, opacity 0.25s;
-    }
+    .marker-bubble { background: var(--surface); border: 2px solid var(--avail-good); border-radius: 10px; padding: 3px 8px; font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500; color: var(--text); white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 5px; transition: transform 0.15s, opacity 0.25s; }
     .marker-bubble:hover { transform: scale(1.06); }
-    .marker-bubble.empty  { border-color: var(--orange); opacity: 0.65; }
-    .marker-bubble.low    { border-color: var(--yellow); }
+    .marker-bubble.low    { border-color: var(--avail-low); }
+    .marker-bubble.empty  { border-color: var(--avail-empty); opacity: 0.65; }
     .marker-bubble.closed { border-color: var(--muted); opacity: 0.4; }
     .marker-bubble.faded  { opacity: 0.1; }
     .marker-vehicle { display: flex; align-items: center; gap: 2px; }
     .marker-vehicle + .marker-vehicle { border-left: 1px solid var(--border); padding-left: 5px; }
 
     /* Popup */
-    .leaflet-popup-content-wrapper {
-      background: var(--surface) !important; border: 1px solid var(--border) !important;
-      border-radius: var(--radius) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
-      color: var(--text) !important;
-    }
+    .leaflet-popup-content-wrapper { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: var(--radius) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important; color: var(--text) !important; }
     .leaflet-popup-tip { background: var(--surface) !important; }
-    .popup-content { font-family: 'DM Mono', monospace; min-width: 200px; }
-    .popup-name { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
-    .popup-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.72rem; }
-    .popup-row-label { color: var(--muted); }
-    .popup-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
-    .popup-vehicle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; font-size: 0.72rem; }
-    .popup-avail-bar { margin-top: 10px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .popup-avail-fill { height: 100%; background: var(--green); border-radius: 2px; }
+    .popup-content { font-family: 'DM Mono', monospace; min-width: 210px; }
+    .popup-name { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; }
+    .popup-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 0.7rem; }
+    .popup-label { color: var(--muted); }
+    .popup-divider { border: none; border-top: 1px solid var(--border); margin: 7px 0; }
+    .popup-vehicle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; font-size: 0.7rem; }
+    .popup-avail-bar { margin-top: 8px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .popup-avail-fill { height: 100%; background: var(--avail-good); border-radius: 2px; }
+    .popup-sparkline { margin-top: 10px; }
+    .popup-sparkline-title { font-size: 0.6rem; color: var(--muted); margin-bottom: 4px; }
+    .sparkline-canvas { display: block; }
+
+    /* Location dot */
+    .location-dot-outer { width: 20px; height: 20px; border-radius: 50%; background: rgba(66,133,244,0.2); display: flex; align-items: center; justify-content: center; animation: loc-pulse 2s infinite; }
+    .location-dot-inner { width: 10px; height: 10px; border-radius: 50%; background: #4285f4; border: 2px solid white; box-shadow: 0 0 6px rgba(66,133,244,0.8); }
+    @keyframes loc-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
+
+    /* Map legend */
+    .map-legend { background: rgba(21,24,32,0.92); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text); backdrop-filter: blur(6px); min-width: 145px; }
+    .map-legend-title { font-family: 'Syne', sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 7px; }
+    .map-legend-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+    .map-legend-swatch { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 2px solid; background: #151820; flex-shrink: 0; }
+    .map-legend-divider { border: none; border-top: 1px solid var(--border); margin: 6px 0; }
   </style>
 </head>
 <body>
@@ -224,62 +183,89 @@
 
 <header>
   <div class="logo">
-    <span class="logo-icon">🚲</span>
+    <span style="font-size:20px">🚲</span>
     <h1>Belfast <span>Bikes</span></h1>
   </div>
   <div class="status-bar">
     <span><span class="pulse-dot"></span>LIVE</span>
     <span>Updated: <span id="last-updated">—</span></span>
-    <button class="refresh-btn" onclick="loadStations()">↻ Refresh</button>
+    <button class="btn" id="locate-btn" onclick="findMe()">📍 Find me</button>
+    <button class="btn" onclick="loadStations()">↻ Refresh</button>
   </div>
 </header>
 
 <div class="main">
   <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-title">Network Summary</div>
-      <div class="filter-toggles">
 
-        <div class="toggle-btn" id="toggle-bikes" onclick="toggleFilter('bikes')" title="Filter: standard bikes">
-          <span class="toggle-tick" style="color:var(--green)">✓ ON</span>
-          <div class="toggle-value bikes" id="total-bikes">—</div>
-          <div class="toggle-label">🚲 Bikes</div>
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('summary')">Summary</div>
+      <div class="tab" onclick="switchTab('stations')">Stations</div>
+      <div class="tab" onclick="switchTab('top5')">Top 5</div>
+      <div class="tab" onclick="switchTab('favourites')">⭐ Favs</div>
+    </div>
+
+    <!-- SUMMARY TAB -->
+    <div class="tab-panel active" id="tab-summary">
+      <div class="sidebar-header">
+        <div class="sidebar-section-title">Network Summary</div>
+        <div class="filter-toggles">
+          <div class="toggle-btn" id="toggle-bikes" onclick="toggleFilter('bikes')">
+            <span class="toggle-tick">✓</span>
+            <div class="toggle-value bikes" id="total-bikes">—</div>
+            <div class="toggle-label">🚲 Bikes</div>
+          </div>
+          <div class="toggle-btn" id="toggle-ebikes" onclick="toggleFilter('ebikes')">
+            <span class="toggle-tick">✓</span>
+            <div class="toggle-value ebikes" id="total-ebikes">—</div>
+            <div class="toggle-label">⚡ E-bikes</div>
+          </div>
+          <div class="toggle-btn" id="toggle-scooters" onclick="toggleFilter('scooters')">
+            <span class="toggle-tick">✓</span>
+            <div class="toggle-value scooters" id="total-scooters">—</div>
+            <div class="toggle-label">🛴 Scooters</div>
+          </div>
+          <div class="toggle-btn" id="toggle-docks" onclick="toggleFilter('docks')">
+            <span class="toggle-tick">✓</span>
+            <div class="toggle-value docks" id="total-docks">—</div>
+            <div class="toggle-label">🅿 Docks</div>
+          </div>
         </div>
-
-        <div class="toggle-btn" id="toggle-ebikes" onclick="toggleFilter('ebikes')" title="Filter: e-bikes">
-          <span class="toggle-tick" style="color:var(--yellow)">✓ ON</span>
-          <div class="toggle-value ebikes" id="total-ebikes">—</div>
-          <div class="toggle-label">⚡ E-bikes</div>
+        <div class="filter-hint" id="filter-hint"></div>
+      </div>
+      <div style="padding:12px 14px; border-bottom:1px solid var(--border); font-size:0.7rem; color:var(--muted); line-height:1.8; flex-shrink:0;">
+        Click a stat above to filter the map.<br>
+        Click again to clear the filter.
+      </div>
+      <div style="padding:12px 14px; flex-shrink:0;">
+        <div class="sidebar-section-title" style="margin-bottom:8px;">Availability legend</div>
+        <div class="legend" style="padding:0; border:none;">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--avail-good)"></div>Good (&gt;25%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--avail-low)"></div>Low (&lt;25%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--avail-empty)"></div>Empty</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Closed</div>
         </div>
-
-        <div class="toggle-btn" id="toggle-scooters" onclick="toggleFilter('scooters')" title="Filter: e-scooters">
-          <span class="toggle-tick" style="color:var(--purple)">✓ ON</span>
-          <div class="toggle-value scooters" id="total-scooters">—</div>
-          <div class="toggle-label">🛴 Scooters</div>
-        </div>
-
-        <div class="toggle-btn" id="toggle-docks" onclick="toggleFilter('docks')" title="Filter: free docks">
-          <span class="toggle-tick" style="color:var(--orange)">✓ ON</span>
-          <div class="toggle-value docks" id="total-docks">—</div>
-          <div class="toggle-label">🅿 Docks</div>
-        </div>
-
       </div>
     </div>
 
-    <div class="filter-hint" id="filter-hint"></div>
-
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Available</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Low (&lt;25%)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Empty</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Closed</div>
+    <!-- STATIONS TAB -->
+    <div class="tab-panel" id="tab-stations">
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Search stations…" oninput="filterStations(this.value)" />
+      </div>
+      <div class="station-list" id="station-list"></div>
     </div>
 
-    <div class="search-box">
-      <input type="text" id="search" placeholder="Search stations…" oninput="filterStations(this.value)" />
+    <!-- TOP 5 TAB -->
+    <div class="tab-panel" id="tab-top5">
+      <div class="top5-list" id="top5-list"></div>
     </div>
-    <div class="station-list" id="station-list"></div>
+
+    <!-- FAVOURITES TAB -->
+    <div class="tab-panel" id="tab-favourites">
+      <div class="favs-list" id="favs-list"></div>
+    </div>
+
   </div>
 
   <div id="map"></div>
@@ -295,16 +281,68 @@
   let allStations = [];
   let activeId = null;
   let searchQuery = '';
+  let activeFilter = null;
+  let userLatLng = null;
+  let locationMarker = null;
+  let nearestId = null;
 
-  // Which filters are active (null = no filter active)
-  let activeFilter = null; // 'bikes' | 'ebikes' | 'scooters' | 'docks' | null
+  // Availability history: { stationId: [{time, bikes}] }
+  const history = {};
+  const MAX_HISTORY = 20;
 
+  // Favourites stored in localStorage
+  function getFavs() {
+    try { return JSON.parse(localStorage.getItem('bbfavs') || '[]'); } catch(e) { return []; }
+  }
+  function saveFavs(favs) {
+    localStorage.setItem('bbfavs', JSON.stringify(favs));
+  }
+  function isFav(id) { return getFavs().includes(id); }
+  function toggleFav(id, e) {
+    e.stopPropagation();
+    const favs = getFavs();
+    const idx = favs.indexOf(id);
+    if (idx >= 0) favs.splice(idx, 1); else favs.push(id);
+    saveFavs(favs);
+    renderList(getFilteredList());
+    renderFavs();
+  }
+
+  // Tabs
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      const names = ['summary','stations','top5','favourites'];
+      t.classList.toggle('active', names[i] === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    if (name === 'top5') renderTop5();
+    if (name === 'favourites') renderFavs();
+  }
+
+  // Map init
   map = L.map('map', { center: BELFAST_CENTER, zoom: 14 });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19
   }).addTo(map);
 
-  // Filter toggle logic
+  // Map legend
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function() {
+    const div = L.DomUtil.create('div', 'map-legend');
+    div.innerHTML =
+      '<div class="map-legend-title">Availability</div>' +
+      '<div class="map-legend-row"><span class="map-legend-swatch" style="border-color:#4fc3f7"></span>Good (&gt;25%)</div>' +
+      '<div class="map-legend-row"><span class="map-legend-swatch" style="border-color:#ffd166"></span>Low (&lt;25%)</div>' +
+      '<div class="map-legend-row"><span class="map-legend-swatch" style="border-color:#ef5350;opacity:0.65"></span>Empty</div>' +
+      '<div class="map-legend-row"><span class="map-legend-swatch" style="border-color:#5a6070;opacity:0.4"></span>Closed</div>' +
+      '<div class="map-legend-divider"></div>' +
+      '<div class="map-legend-row">🚲 Bike &nbsp;⚡ E-bike &nbsp;🛴 Scooter</div>';
+    return div;
+  };
+  legend.addTo(map);
+
+  // Filter toggles
   function toggleFilter(type) {
     activeFilter = (activeFilter === type) ? null : type;
     applyFilter();
@@ -320,59 +358,74 @@
   }
 
   function applyFilter() {
-    // Update toggle button styles
-    const types = ['bikes', 'ebikes', 'scooters', 'docks'];
-    types.forEach(t => {
+    ['bikes','ebikes','scooters','docks'].forEach(t => {
       const btn = document.getElementById('toggle-' + t);
       btn.className = 'toggle-btn';
-      if (activeFilter === t) {
-        btn.classList.add('active-' + t);
-      } else if (activeFilter !== null) {
-        btn.classList.add('dimmed');
-      }
+      if (activeFilter === t) btn.classList.add('active-' + t);
+      else if (activeFilter !== null) btn.classList.add('dimmed');
     });
-
-    // Update hint text
     const hint = document.getElementById('filter-hint');
     if (activeFilter) {
-      const labels = { bikes: '🚲 standard bikes', ebikes: '⚡ e-bikes', scooters: '🛴 e-scooters', docks: '🅿 free docks' };
+      const labels = { bikes:'🚲 standard bikes', ebikes:'⚡ e-bikes', scooters:'🛴 e-scooters', docks:'🅿 free docks' };
       const count = allStations.filter(stationMatchesFilter).length;
-      hint.textContent = 'Showing ' + count + ' stations with ' + labels[activeFilter] + ' — click again to clear';
+      hint.textContent = count + ' stations with ' + labels[activeFilter] + ' — click to clear';
     } else {
       hint.textContent = '';
     }
-
-    // Fade/show markers on map
     allStations.forEach(s => {
       if (!s._marker) return;
       const el = s._marker.getElement();
       if (!el) return;
       const bubble = el.querySelector('.marker-bubble');
-      if (!bubble) return;
-      if (activeFilter && !stationMatchesFilter(s)) {
-        bubble.classList.add('faded');
-      } else {
-        bubble.classList.remove('faded');
-      }
+      if (bubble) bubble.classList.toggle('faded', activeFilter !== null && !stationMatchesFilter(s));
     });
-
-    // Re-render list with filter applied (respecting search too)
     renderList(getFilteredList());
   }
 
-  function getFilteredList() {
-    return allStations.filter(s => {
-      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
-    });
-  }
-
+  // Marker helpers
   function markerClass(s) {
     if (!s.is_renting) return 'closed';
     if (s.free_bikes === 0) return 'empty';
     const total = s.free_bikes + s.empty_slots;
-    if (total > 0 && s.free_bikes / total < 0.25) return 'low';
-    return '';
+    return (total > 0 && s.free_bikes / total < 0.25) ? 'low' : '';
+  }
+
+  function formatAge(ts) {
+    if (!ts) return '';
+    const secs = Math.floor(Date.now() / 1000) - ts;
+    if (secs < 60) return secs + 's ago';
+    if (secs < 3600) return Math.floor(secs/60) + 'm ago';
+    return Math.floor(secs/3600) + 'h ago';
+  }
+
+  function formatDist(m) {
+    if (m === null) return '';
+    return m < 1000 ? Math.round(m) + 'm' : (m/1000).toFixed(1) + 'km';
+  }
+
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function drawSparkline(canvasId, data) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || data.length < 2) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const max = Math.max(...data.map(d => d.bikes), 1);
+    ctx.beginPath();
+    ctx.strokeStyle = '#4fc3f7';
+    ctx.lineWidth = 1.5;
+    data.forEach((d, i) => {
+      const x = (i / (data.length - 1)) * w;
+      const y = h - (d.bikes / max) * h;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
   }
 
   function createMarker(s) {
@@ -381,81 +434,179 @@
     if (s.bikes > 0)    parts.push('<span class="marker-vehicle">🚲 ' + s.bikes + '</span>');
     if (s.ebikes > 0)   parts.push('<span class="marker-vehicle">⚡ ' + s.ebikes + '</span>');
     if (s.scooters > 0) parts.push('<span class="marker-vehicle">🛴 ' + s.scooters + '</span>');
-    if (parts.length === 0) parts.push('<span class="marker-vehicle" style="color:var(--muted)">Empty</span>');
+    if (!parts.length)  parts.push('<span class="marker-vehicle" style="color:var(--muted)">Empty</span>');
 
-    const html = '<div class="marker-bubble ' + cls + '">' + parts.join('') + '</div>';
-    const icon = L.divIcon({ html: html, className: '', iconAnchor: [40, 16] });
+    const icon = L.divIcon({
+      html: '<div class="marker-bubble ' + cls + '">' + parts.join('') + '</div>',
+      className: '', iconAnchor: [40, 16]
+    });
     const marker = L.marker([s.latitude, s.longitude], { icon });
 
     const total = s.free_bikes + s.empty_slots;
-    const pct = total > 0 ? Math.round((s.free_bikes / total) * 100) : 0;
-    const statusStr = !s.is_renting
-      ? '<span style="color:var(--orange)">Closed</span>'
-      : '<span style="color:var(--green)">Open</span>';
+    const pct = total > 0 ? Math.round((s.free_bikes/total)*100) : 0;
+    const hist = history[s.id] || [];
+    const sparkId = 'spark-' + s.id;
+    const hasHistory = hist.length >= 2;
 
-    const popup = '<div class="popup-content">' +
-      '<div class="popup-name">' + s.name + '</div>' +
-      '<div class="popup-row"><span class="popup-row-label">Status</span>' + statusStr + '</div>' +
-      '<div class="popup-row"><span class="popup-row-label">Capacity</span><span>' + (s.capacity || '—') + '</span></div>' +
-      '<div class="popup-row"><span class="popup-row-label">Free docks</span><span style="color:var(--orange)">' + s.empty_slots + '</span></div>' +
+    const popup =
+      '<div class="popup-content">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+      '<div class="popup-name" style="margin-bottom:0">' + s.name + '</div>' +
+      '<button class="fav-btn" style="font-size:1rem;padding:3px 6px" onclick="toggleFav(\'' + s.id + '\', event);this.textContent=isFav(\'' + s.id + '\') ? \'⭐\' : \'☆\';" title="Favourite">' + (isFav(s.id) ? '⭐' : '☆') + '</button>' +
+      '</div>' +
+      '<div class="popup-row"><span class="popup-label">Status</span>' +
+        (s.is_renting ? '<span style="color:var(--avail-good)">Open</span>' : '<span style="color:var(--avail-empty)">Closed</span>') + '</div>' +
+      '<div class="popup-row"><span class="popup-label">Capacity</span><span>' + (s.capacity||'—') + '</span></div>' +
+      '<div class="popup-row"><span class="popup-label">Free docks</span><span style="color:var(--avail-good)">' + s.empty_slots + '</span></div>' +
+      '<div class="popup-row"><span class="popup-label">Last updated</span><span style="color:var(--muted)">' + formatAge(s.last_reported) + '</span></div>' +
+      (userLatLng ? '<div class="popup-row"><span class="popup-label">Distance</span><span>' + formatDist(haversine(userLatLng[0],userLatLng[1],s.latitude,s.longitude)) + '</span></div>' : '') +
       '<hr class="popup-divider">' +
       '<div class="popup-vehicle-row"><span>🚲 Standard bikes</span><span style="color:var(--green)">' + s.bikes + '</span></div>' +
-      '<div class="popup-vehicle-row"><span>⚡ E-bikes</span><span style="color:var(--yellow)">' + s.ebikes + '</span></div>' +
+      '<div class="popup-vehicle-row"><span>⚡ E-bikes</span><span style="color:var(--orange)">' + s.ebikes + '</span></div>' +
       '<div class="popup-vehicle-row"><span>🛴 E-scooters</span><span style="color:var(--purple)">' + s.scooters + '</span></div>' +
       '<div class="popup-avail-bar"><div class="popup-avail-fill" style="width:' + pct + '%"></div></div>' +
+      (hasHistory ? '<div class="popup-sparkline"><div class="popup-sparkline-title">Bike availability this session</div><canvas id="' + sparkId + '" class="sparkline-canvas" width="190" height="30"></canvas></div>' : '') +
       '</div>';
 
     marker.bindPopup(popup);
     marker.on('click', () => highlightStation(s.id));
+    marker.on('popupopen', () => {
+      if (hasHistory) setTimeout(() => drawSparkline(sparkId, hist), 50);
+    });
     return marker;
+  }
+
+  // Track history on each refresh
+  function recordHistory(stations) {
+    const now = Date.now();
+    stations.forEach(s => {
+      if (!history[s.id]) history[s.id] = [];
+      history[s.id].push({ time: now, bikes: s.free_bikes });
+      if (history[s.id].length > MAX_HISTORY) history[s.id].shift();
+    });
   }
 
   function renderStations(stations) {
     markers.forEach(m => map.removeLayer(m));
     markers = [];
-    let totalBikes = 0, totalEbikes = 0, totalScooters = 0, totalDocks = 0;
+    let tb = 0, te = 0, ts = 0, td = 0;
     stations.forEach(s => {
-      totalBikes    += s.bikes;
-      totalEbikes   += s.ebikes;
-      totalScooters += s.scooters;
-      totalDocks    += s.empty_slots;
+      tb += s.bikes; te += s.ebikes; ts += s.scooters; td += s.empty_slots;
       const m = createMarker(s);
       m.addTo(map);
       markers.push(m);
       s._marker = m;
     });
-    document.getElementById('total-bikes').textContent    = totalBikes;
-    document.getElementById('total-ebikes').textContent   = totalEbikes;
-    document.getElementById('total-scooters').textContent = totalScooters;
-    document.getElementById('total-docks').textContent    = totalDocks;
-
-    // Re-apply any active filter after re-render
+    document.getElementById('total-bikes').textContent    = tb;
+    document.getElementById('total-ebikes').textContent   = te;
+    document.getElementById('total-scooters').textContent = ts;
+    document.getElementById('total-docks').textContent    = td;
     applyFilter();
+  }
+
+  function getFilteredList() {
+    return allStations.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }
 
   function renderList(stations) {
     const list = document.getElementById('station-list');
     if (!stations.length) {
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:0.8rem">No stations found.</div>';
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:0.78rem">No stations found.</div>';
       return;
     }
+    const favs = getFavs();
     list.innerHTML = stations.map((s, idx) => {
-      const delay = Math.min(idx * 15, 400);
-      const closed = !s.is_renting ? ' closed' : '';
-      const filteredOut = (activeFilter && !stationMatchesFilter(s)) ? ' filtered-out' : '';
-      const badge = !s.is_renting ? '<span class="station-closed-badge">CLOSED</span>' : '';
+      const delay = Math.min(idx * 12, 400);
+      const isFavStation = favs.includes(s.id);
+      const dist = userLatLng ? haversine(userLatLng[0], userLatLng[1], s.latitude, s.longitude) : null;
 
       const chips = [];
       if (s.bikes > 0)    chips.push('<span class="chip bike">🚲 ' + s.bikes + '</span>');
       if (s.ebikes > 0)   chips.push('<span class="chip ebike">⚡ ' + s.ebikes + '</span>');
       if (s.scooters > 0) chips.push('<span class="chip scooter">🛴 ' + s.scooters + '</span>');
-      if (chips.length === 0) chips.push('<span class="chip empty">No vehicles</span>');
+      if (!chips.length)  chips.push('<span class="chip empty">No vehicles</span>');
 
-      return '<div class="station-item' + (activeId === s.id ? ' active' : '') + closed + filteredOut + '" ' +
-        'id="item-' + s.id + '" ' +
-        'onclick="highlightStation(\'' + s.id + '\')" ' +
+      const badges = [];
+      if (!s.is_renting) badges.push('<span class="badge closed">CLOSED</span>');
+      if (s.id === nearestId) badges.push('<span class="badge nearest">📍 Nearest</span>');
+
+      return '<div class="station-item' +
+        (activeId === s.id ? ' active' : '') +
+        (!s.is_renting ? ' closed' : '') +
+        (activeFilter && !stationMatchesFilter(s) ? ' filtered-out' : '') + '" ' +
+        'id="item-' + s.id + '" onclick="highlightStation(\'' + s.id + '\')" ' +
         'style="animation-delay:' + delay + 'ms">' +
-        '<div class="station-name">' + s.name + badge + '</div>' +
+        '<div class="station-name-row">' +
+          '<div class="station-name">' + s.name + '</div>' +
+          '<div class="station-meta">' +
+            (dist !== null ? '<span>' + formatDist(dist) + '</span>' : '') +
+            badges.join('') +
+            '<button class="fav-btn' + (isFavStation ? ' active' : '') + '" onclick="toggleFav(\'' + s.id + '\', event)" title="' + (isFavStation ? 'Remove favourite' : 'Add favourite') + '">' +
+              (isFavStation ? '⭐' : '☆') +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="vehicle-chips">' + chips.join('') + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderTop5() {
+    const sorted = [...allStations]
+      .filter(s => s.is_renting)
+      .sort((a, b) => b.free_bikes - a.free_bikes)
+      .slice(0, 5);
+
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+    const list = document.getElementById('top5-list');
+    if (!sorted.length) {
+      list.innerHTML = '<div class="favs-empty">No data yet.</div>';
+      return;
+    }
+    const max = sorted[0].free_bikes || 1;
+    list.innerHTML = sorted.map((s, i) => {
+      const total = s.free_bikes + s.empty_slots;
+      const pct = total > 0 ? Math.round((s.free_bikes/total)*100) : 0;
+      const dist = userLatLng ? ' · ' + formatDist(haversine(userLatLng[0],userLatLng[1],s.latitude,s.longitude)) : '';
+      return '<div class="top5-item" onclick="highlightStation(\'' + s.id + '\')">' +
+        '<div class="top5-rank">' + medals[i] + ' Rank ' + (i+1) + '<span>' + s.free_bikes + ' bikes</span></div>' +
+        '<div class="top5-name">' + s.name + '</div>' +
+        '<div class="top5-bar-track"><div class="top5-bar-fill" style="width:' + Math.round((s.free_bikes/max)*100) + '%"></div></div>' +
+        '<div class="top5-meta">' + pct + '% full' + dist + ' · updated ' + formatAge(s.last_reported) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderFavs() {
+    const favIds = getFavs();
+    const list = document.getElementById('favs-list');
+    if (!favIds.length) {
+      list.innerHTML = '<div class="favs-empty">No favourites yet.<br><br>Tap ☆ on any station<br>in the Stations tab to save it here.</div>';
+      return;
+    }
+    const favStations = favIds.map(id => allStations.find(s => s.id === id)).filter(Boolean);
+    if (!favStations.length) {
+      list.innerHTML = '<div class="favs-empty">Your saved stations will appear here once data loads.</div>';
+      return;
+    }
+    const favs = getFavs();
+    list.innerHTML = favStations.map((s, idx) => {
+      const dist = userLatLng ? haversine(userLatLng[0], userLatLng[1], s.latitude, s.longitude) : null;
+      const chips = [];
+      if (s.bikes > 0)    chips.push('<span class="chip bike">🚲 ' + s.bikes + '</span>');
+      if (s.ebikes > 0)   chips.push('<span class="chip ebike">⚡ ' + s.ebikes + '</span>');
+      if (s.scooters > 0) chips.push('<span class="chip scooter">🛴 ' + s.scooters + '</span>');
+      if (!chips.length)  chips.push('<span class="chip empty">No vehicles</span>');
+      return '<div class="station-item' + (!s.is_renting ? ' closed' : '') + '" ' +
+        'id="fav-item-' + s.id + '" onclick="highlightStation(\'' + s.id + '\')">' +
+        '<div class="station-name-row">' +
+          '<div class="station-name">' + s.name + '</div>' +
+          '<div class="station-meta">' +
+            (dist !== null ? '<span>' + formatDist(dist) + '</span>' : '') +
+            '<button class="fav-btn active" onclick="toggleFav(\'' + s.id + '\', event)" title="Remove favourite">⭐</button>' +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:0.6rem;color:var(--muted);margin-bottom:5px">Updated ' + formatAge(s.last_reported) + '</div>' +
         '<div class="vehicle-chips">' + chips.join('') + '</div>' +
         '</div>';
     }).join('');
@@ -466,8 +617,10 @@
     const s = allStations.find(x => x.id === id);
     if (!s) return;
     document.querySelectorAll('.station-item').forEach(el => el.classList.remove('active'));
-    const item = document.getElementById('item-' + id);
-    if (item) { item.classList.add('active'); item.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    ['item-','fav-item-'].forEach(prefix => {
+      const el = document.getElementById(prefix + id);
+      if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    });
     if (s._marker) {
       map.flyTo([s.latitude, s.longitude], 16, { duration: 0.8 });
       setTimeout(() => s._marker.openPopup(), 500);
@@ -479,23 +632,70 @@
     renderList(getFilteredList());
   }
 
+  // Geolocation
+  function findMe() {
+    const btn = document.getElementById('locate-btn');
+    if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+    btn.textContent = '📍 Locating…';
+    btn.style.color = '#4285f4';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        userLatLng = [pos.coords.latitude, pos.coords.longitude];
+        placeLocationDot(userLatLng);
+        findNearest(userLatLng);
+        renderList(getFilteredList());
+        btn.textContent = '📍 Find me';
+        btn.style.color = '';
+      },
+      () => {
+        btn.textContent = '📍 Find me'; btn.style.color = '';
+        alert('Could not get location. Make sure you are on http://localhost:3000 and have allowed location access.');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function placeLocationDot(latlng) {
+    if (locationMarker) map.removeLayer(locationMarker);
+    const icon = L.divIcon({ html: '<div class="location-dot-outer"><div class="location-dot-inner"></div></div>', className: '', iconAnchor: [10,10] });
+    locationMarker = L.marker(latlng, { icon, zIndexOffset: 1000 }).addTo(map);
+    map.flyTo(latlng, 15, { duration: 1 });
+  }
+
+  function findNearest(latlng) {
+    let nearest = null, minDist = Infinity;
+    allStations.forEach(s => {
+      if (!s.is_renting) return;
+      const d = haversine(latlng[0], latlng[1], s.latitude, s.longitude);
+      if (d < minDist) { minDist = d; nearest = s; }
+    });
+    if (!nearest) return;
+    nearestId = nearest.id;
+    setTimeout(() => {
+      if (nearest._marker) {
+        map.flyTo([nearest.latitude, nearest.longitude], 16, { duration: 1 });
+        setTimeout(() => nearest._marker.openPopup(), 800);
+      }
+    }, 1200);
+  }
+
   async function loadStations() {
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error('Server error: ' + res.status);
       const data = await res.json();
-      allStations = (data.network?.stations || []).sort((a, b) => a.name.localeCompare(b.name));
+      allStations = (data.network?.stations || []).sort((a,b) => a.name.localeCompare(b.name));
       if (!allStations.length) throw new Error('No station data');
+      recordHistory(allStations);
       renderStations(allStations);
       renderList(getFilteredList());
-      const now = new Date();
       document.getElementById('last-updated').textContent =
-        now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
       document.getElementById('loading').classList.add('hidden');
     } catch (err) {
       console.error(err);
       document.getElementById('loading').innerHTML =
-        '<div style="text-align:center;color:var(--orange);font-family:DM Mono,monospace;padding:20px">' +
+        '<div style="text-align:center;color:var(--avail-empty);font-family:DM Mono,monospace;padding:20px">' +
         '<div style="font-size:2rem;margin-bottom:12px">⚠️</div>' +
         '<div>Could not connect to local server.</div>' +
         '<div style="color:var(--muted);font-size:0.8rem;margin-top:8px">Make sure you have run npm start in your terminal.</div></div>';
