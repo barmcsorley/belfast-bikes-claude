@@ -1,0 +1,7 @@
+services:
+  belfast-bikes:
+    build: .
+    container_name: belfast-bikes
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
